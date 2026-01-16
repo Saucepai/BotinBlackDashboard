@@ -3,24 +3,18 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "bcrypt": "^5.1.1",
+    "dotenv": "^17.2.3",
     "express": "^4.19.2",
     "express-session": "^1.17.3"
   },
   "engines": {
     "node": ">=18"
-  },
-
-  "name": "botinblackdashboard",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
