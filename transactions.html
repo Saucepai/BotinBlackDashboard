@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>💸 Transactions - Bot in Black Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('public/assets/rdobackground.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 10px #000;
+        }
+
+        nav {
+            margin-bottom: 40px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 20px;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            display: inline-block;
+            background: rgba(0,0,0,0.6);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 4px 4px 15px #000;
+            margin: 15px;
+            width: 320px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        input[type=text], input[type=number] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: none;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background-color: rgba(0,0,0,0.6);
+            color: #fff;
+            margin-top: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0.85);
+            transform: scale(1.05);
+        }
+
+        #outputContainer {
+            margin-top: 30px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        #outputLabel {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            text-shadow: 2px 2px 5px #000;
+        }
+
+        #output {
+            background-color: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success { color: #00FF00; font-weight: bold; }
+        .error { color: #FF6347; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Hub</a> |
+    <a href="transactions.html">Transactions</a> |
+    <a href="properties.html">Properties</a> |
+    <a href="misc.html">Misc</a>
+</nav>
+
+<h1>💸 Transaction Management</h1>
+
+<!-- ===== Give Cash ===== -->
+<div class="card">
+    <h3>💵 Give Cash to Player</h3>
+    <input type="text" id="addCashUserId" placeholder="Target UserID" />
+    <input type="number" id="addCashAmount" placeholder="Amount to add" />
+    <button id="addCashBtn">Add Cash</button>
+</div>
+
+<!-- ===== Remove Cash ===== -->
+<div class="card">
+    <h3>💵❌Remove Cash from Player</h3>
+    <input type="text" id="removeCashUserId" placeholder="Target UserID" />
+    <input type="number" id="removeCashAmount" placeholder="Amount to remove" />
+    <button id="removeCashBtn">Remove Cash</button>
+</div>
+
+<!-- ===== Add Bank Funds ===== -->
+<div class="card">
+    <h3>💰 Give Bank Funds to Player</h3>
+    <input type="text" id="addBankUserId" placeholder="Target UserID" />
+    <input type="number" id="addBankAmount" placeholder="Amount to add" />
+    <button id="addBankBtn">Add Bank Funds</button>
+</div>
+
+<!-- ===== Remove Bank Funds ===== -->
+<div class="card">
+    <h3>💰❌ Remove Bank Funds from Player</h3>
+    <input type="text" id="removeBankUserId" placeholder="Target UserID" />
+    <input type="number" id="removeBankAmount" placeholder="Amount to remove" />
+    <button id="removeBankBtn">Remove Bank Funds</button>
+</div>
+
+<!-- ===== Add Stash Funds ===== -->
+<div class="card">
+    <h3>🧰 Give Stash Funds to Player</h3>
+    <input type="text" id="addStashUserId" placeholder="Target UserID" />
+    <input type="number" id="addStashAmount" placeholder="Amount to add" />
+    <button id="addStashBtn">Add Stash Funds</button>
+</div>
+
+<!-- ===== Remove Stash Funds ===== -->
+<div class="card">
+    <h3>🧰❌ Remove Stash Funds from Player</h3>
+    <input type="text" id="removeStashUserId" placeholder="Target UserID" />
+    <input type="number" id="removeStashAmount" placeholder="Amount to remove" />
+    <button id="removeStashBtn">Remove Stash Funds</button>
+</div>
+
+<!-- ===== View Player Inventory ===== -->
+<div class="card">
+    <h3>📦 View Player Inventory</h3>
+    <input type="text" id="inventoryTargetId" placeholder="Target UserID" />
+    <button id="viewInventoryBtn">View Inventory</button>
+</div>
+
+<!-- ===== Output Box ===== -->
+<div id="outputContainer">
+    <span id="outputLabel">Output Box</span>
+    <pre id="output"></pre>
+</div>
+
+<script>
+const output = document.getElementById('output');
+
+async function handleTransaction(endpoint, userId, amount = null) {
+    if (!userId || (amount !== null && (isNaN(amount) || amount <= 0))) {
+        output.textContent = '❌ Enter a valid UserID and amount greater than 0.';
+        output.className = 'error';
+        return;
+    }
+    try {
+        const body = amount !== null ? { targetId: userId, amount } : { targetId: userId };
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        output.textContent = data.success ? `✅ ${data.message}\nNew Balance: $${data.newBalance}` : `❌ Error: ${data.message || 'Unknown error'}`;
+        output.className = data.success ? 'success' : 'error';
+    } catch (err) {
+        output.textContent = `❌ Error: ${err.message}`;
+        output.className = 'error';
+    }
+    output.scrollTop = output.scrollHeight;
+}
+
+// Cash buttons
+document.getElementById('addCashBtn').onclick = () => handleTransaction('/api/admin-add-cash', document.getElementById('addCashUserId').value, parseInt(document.getElementById('addCashAmount').value));
+document.getElementById('removeCashBtn').onclick = () => handleTransaction('/api/admin-remove-cash', document.getElementById('removeCashUserId').value, parseInt(document.getElementById('removeCashAmount').value));
+
+// Bank buttons
+document.getElementById('addBankBtn').onclick = () => handleTransaction('/api/admin-add-bank', document.getElementById('addBankUserId').value, parseInt(document.getElementById('addBankAmount').value));
+document.getElementById('removeBankBtn').onclick = () => handleTransaction('/api/admin-remove-bank', document.getElementById('removeBankUserId').value, parseInt(document.getElementById('removeBankAmount').value));
+
+// Stash buttons
+document.getElementById('addStashBtn').onclick = () => handleTransaction('/api/admin-add-stash', document.getElementById('addStashUserId').value, parseInt(document.getElementById('addStashAmount').value));
+document.getElementById('removeStashBtn').onclick = () => handleTransaction('/api/admin-remove-stash', document.getElementById('removeStashUserId').value, parseInt(document.getElementById('removeStashAmount').value));
+
+// Inventory button
+document.getElementById('viewInventoryBtn').onclick = async () => {
+    const targetId = document.getElementById('inventoryTargetId').value.trim();
+    if (!targetId) {
+        output.textContent = '❌ Please enter a valid UserID.';
+        output.className = 'error';
+        return;
+    }
+    try {
+        const res = await fetch('/api/admin-inventory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targetId })
+        });
+        const data = await res.json();
+        if (!data.success) {
+            output.textContent = `❌ Error: ${data.message}`;
+            output.className = 'error';
+            return;
+        }
+        const inv = data.inventory;
+        let outputText = '📦 **Inventory Overview**\n\n';
+        for (const [key, value] of Object.entries(inv)) {
+            outputText += `**${key.charAt(0).toUpperCase() + key.slice(1)}:**\n${value}\n\n`;
+        }
+        output.textContent = outputText;
+        output.className = 'success';
+    } catch (err) {
+        output.textContent = `❌ Error: ${err.message}`;
+        output.className = 'error';
+    }
+};
+</script>
+
+</body>
+</html>
