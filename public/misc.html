@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🤠 Bot Dashboard - Miscellaneous Features</title>
+    <style>
+        /* ===== Page background ===== */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('public/assets/rdobackground.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .card {
+            display: inline-block;
+            background: rgba(0,0,0,0.6);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 4px 4px 15px #000;
+            margin: 15px;
+            width: 320px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        input[type=text], input[type=number] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: none;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            text-shadow: 4px 4px 10px #000;
+        }
+
+        /* ===== Button styles ===== */
+        button {
+            padding: 14px 28px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background-color: rgba(0,0,0,0.6);
+            color: #fff;
+            margin: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0.85);
+            transform: scale(1.05);
+        }
+
+        /* ===== Output Box ===== */
+        #outputContainer {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #outputLabel {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            text-shadow: 2px 2px 5px #000;
+        }
+
+        #output {
+            background-color: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 20px;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .success { color: #00FF00; font-weight: bold; }
+        .error { color: #FF6347; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Dashboard</a> | 
+    <a href="transactions.html">Transactions</a> | 
+    <a href="properties.html">Properties</a> | 
+    <a href="misc.html">Miscellaneous</a>
+</nav>
+
+<h1>🤠 Bot Dashboard - Misc. Features</h1>
+
+<!-- ===== Only one button now ===== -->
+<div class="card">
+    <h2>🔮 Madam Nazar's Location</h2>
+    <button id="nazarBtn">Post Location</button>
+</div>
+
+
+<!-- ===== Output Box ===== -->
+<div id="outputContainer">
+    <span id="outputLabel">Output Box</span>
+    <pre id="output"></pre>
+</div>
+
+
+
+<script>
+const output = document.getElementById('output');
+
+document.getElementById('nazarBtn').onclick = async () => {
+    try {
+        const res = await fetch('/api/nazar/post', { method: 'POST' });
+        const data = await res.json();
+
+        // ✅ Show success or error messages
+        if (data.success) {
+            const message = `✅ Success: Madam Nazar location posted!`;
+            output.innerHTML += message + "\n"; // append to log
+            output.className = 'success';
+        } else {
+            const message = `❌ Error: ${data.error || 'Unknown error'}`;
+            output.innerHTML += message + "\n";
+            output.className = 'error';
+        }
+
+        // Keep scroll at bottom for new messages
+        output.scrollTop = output.scrollHeight;
+
+    } catch (err) {
+        const message = `❌ Error: ${err.message}`;
+        output.innerHTML += message + "\n";
+        output.className = 'error';
+        output.scrollTop = output.scrollHeight;
+    }
+};
+</script>
+
+</body>
+</html>
