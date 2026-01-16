@@ -1,13 +1,20 @@
 {
-  "dependencies": {
-    "@supabase/supabase-js": "^2.90.1",
-    "bcrypt": "^6.0.0",
-    "express": "^5.2.1",
-    "express-session": "^1.18.2",
-    "node": "^25.3.0",
-    "supabase": "^2.72.7",
-    "supabase-js": "^1.0.4"
+  "name": "botinblackdashboard",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
   },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+
   "name": "botinblackdashboard",
   "version": "1.0.0",
   "main": "server.js",
