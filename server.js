@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
-const { createClient } = require('supabase-js');
+const { createClient } = require('@supabase/supabase-js');
 
 // ============================
 // SUPABASE CLIENT (SERVER ONLY)
@@ -268,6 +268,7 @@ app.post('/login', async (req, res) => {
 
 }
 module.exports = { startDashboard };
+
 
 
 
