@@ -13,9 +13,11 @@
     "express": "^4.19.2",
     "express-session": "^1.17.3"
   },
+  
   "engines": {
-    "node": ">=18"
+  "node": "18.x"
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
