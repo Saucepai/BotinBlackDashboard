@@ -2,7 +2,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
-    "node": "^25.3.0"
+    "node": "^25.3.0",
+    "supabase": "^2.72.7"
   },
   "name": "publicdashboard",
   "version": "1.0.0",
