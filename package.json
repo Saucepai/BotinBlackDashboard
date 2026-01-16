@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@supabase/supabase-js": "^2.90.1",
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
