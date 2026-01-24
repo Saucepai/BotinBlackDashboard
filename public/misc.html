@@ -3,7 +3,6 @@
 <head>
     <title>🤠 Bot Dashboard - Miscellaneous Features</title>
     <style>
-        /* ===== Page background ===== */
         body {
             font-family: 'Arial', sans-serif;
             background: url('public/assets/rdobackground.png') no-repeat center center fixed;
@@ -25,16 +24,8 @@
             vertical-align: top;
         }
 
-        .card h3 {
+        .card h3, .card h2 {
             margin-top: 0;
-        }
-
-        input[type=text], input[type=number] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: none;
         }
 
         h1 {
@@ -42,7 +33,6 @@
             text-shadow: 4px 4px 10px #000;
         }
 
-        /* ===== Button styles ===== */
         button {
             padding: 14px 28px;
             font-size: 18px;
@@ -60,7 +50,6 @@
             transform: scale(1.05);
         }
 
-        /* ===== Output Box ===== */
         #outputContainer {
             margin-top: 30px;
             text-align: left;
@@ -105,57 +94,54 @@
 <body>
 
 <nav>
-    <a href="index.html">Dashboard</a> | 
-    <a href="transactions.html">Transactions</a> | 
-    <a href="properties.html">Properties</a> | 
-    <a href="misc.html">Miscellaneous</a>
+    <a href="index.html">Dashboard / Links</a> | 
+    <a href="inventory.html">Inventory and Transaction Management</a> | 
+    <a href="properties.html">Property Management</a> | 
+    <a href="transactionlog.html">Admin Logs</a>
 </nav>
 
 <h1>🤠 Bot Dashboard - Misc. Features</h1>
 
-<!-- ===== Only one button now ===== -->
 <div class="card">
     <h2>🔮 Madam Nazar's Location</h2>
     <button id="nazarBtn">Post Location</button>
 </div>
 
-
-<!-- ===== Output Box ===== -->
 <div id="outputContainer">
     <span id="outputLabel">Output Box</span>
     <pre id="output"></pre>
 </div>
 
-
-
 <script>
 const output = document.getElementById('output');
 
 document.getElementById('nazarBtn').onclick = async () => {
+    output.innerHTML += '⏳ Posting Madam Nazar location...\n';
+    output.scrollTop = output.scrollHeight;
+
     try {
-        const res = await fetch('/api/nazar/post', { method: 'POST' });
+        // ✅ Call the new service endpoint
+        const res = await fetch('/api/misc/nazar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
         const data = await res.json();
 
-        // ✅ Show success or error messages
         if (data.success) {
-            const message = `✅ Success: Madam Nazar location posted!`;
-            output.innerHTML += message + "\n"; // append to log
+            const message = `✅ Madam Nazar location posted!\nLocation: ${data.locationText}\nMap: ${data.mapImageUrl || 'No image available'}`;
+            output.innerHTML += message + "\n";
             output.className = 'success';
         } else {
-            const message = `❌ Error: ${data.error || 'Unknown error'}`;
+            const message = `❌ Error: ${data.message || 'Unknown error'}`;
             output.innerHTML += message + "\n";
             output.className = 'error';
         }
-
-        // Keep scroll at bottom for new messages
-        output.scrollTop = output.scrollHeight;
-
     } catch (err) {
-        const message = `❌ Error: ${err.message}`;
-        output.innerHTML += message + "\n";
+        output.innerHTML += `❌ Error: ${err.message}\n`;
         output.className = 'error';
-        output.scrollTop = output.scrollHeight;
     }
+
+    output.scrollTop = output.scrollHeight;
 };
 </script>
 

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>📦 Inventory & Transactions</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: url('/assets/rdobackground.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  padding: 40px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  text-shadow: 4px 4px 10px #000;
+}
+
+nav a {
+  color: #fff;
+  margin: 0 15px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.card {
+  display: inline-block;
+  background: rgba(0,0,0,0.65);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 15px;
+  width: 300px;
+  vertical-align: top;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+#output {
+  margin-top: 30px;
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: pre-wrap;
+}
+
+.success { color: #00ff99; }
+.error { color: #ff6666; }
+</style>
+</head>
+
+<body>
+
+<nav>
+    <a href="index.html">Dashboard / Links</a> | 
+    <a href="properties.html">Property Management</a> | 
+    <a href="misc.html">Misc. Admin Actions</a> |
+    <a href="transactionlog.html">Admin Logs</a>
+</nav>
+
+<h1>📦 Inventory & Transactions</h1>
+
+<div class="card">
+  <h3>View Inventory</h3>
+  <input id="inventoryUserId" placeholder="User ID">
+  <button onclick="loadInventory()">View Inventory</button>
+</div>
+
+<div class="card">
+  <h3>Adjust Balance</h3>
+  <input id="balanceUserId" placeholder="User ID">
+  <input id="balanceAmount" type="number" placeholder="Amount">
+  <select id="balanceField">
+    <option value="Cash">Cash</option>
+    <option value="Bank">Bank</option>
+    <option value="Stash">Stash</option>
+  </select>
+  <button onclick="updateBalance(true)">Add Funds</button>
+  <button onclick="updateBalance(false)">Remove Funds</button>
+</div>
+
+<pre id="output"></pre>
+
+<script>
+const output = document.getElementById('output');
+
+function show(msg, success = true) {
+  output.textContent = msg;
+  output.className = success ? 'success' : 'error';
+}
+
+async function callApi(url, payload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+// ======================
+// INVENTORY
+// ======================
+
+async function loadInventory() {
+  const userId = inventoryUserId.value.trim();
+  if (!userId) return show('User ID required', false);
+
+  const data = await callApi('/api/inventory', { userId });
+  if (!data.success) return show(data.message, false);
+
+  let text = '📦 INVENTORY\n\n';
+  for (const [section, value] of Object.entries(data.inventory)) {
+    text += `=== ${section.toUpperCase()} ===\n${value}\n\n`;
+  }
+
+  show(text);
+}
+
+// ======================
+// BALANCE
+// ======================
+
+async function updateBalance(add) {
+  const userId = balanceUserId.value.trim();
+  const amount = Number(balanceAmount.value);
+  const field = balanceField.value;
+
+  if (!userId || !amount) {
+    return show('User ID and amount required', false);
+  }
+
+  const data = await callApi('/api/users/balance', {
+    userId,
+    field,
+    amount: add ? amount : -amount
+  });
+
+  if (!data.success) return show(data.message, false);
+
+  show(`✅ ${field} updated\nNew Balance: $${data.newBalance}`);
+}
+</script>
+
+</body>
+</html>
