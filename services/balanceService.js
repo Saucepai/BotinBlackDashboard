@@ -43,27 +43,7 @@ async function updateBalance({
     throw updateError;
   }
 
-  // 3. Log transaction
-  await logTransaction({
-    command: 'dashboard-balance-update',
-    userId,
-    username: user.Username || 'Unknown',
-    amount,
-    balanceBefore: before,
-    balanceAfter: after,
-    source: `Dashboard ${amount > 0 ? 'Add' : 'Remove'} ${field}`,
-    metadata: {
-      adminId,
-      adminUsername,
-      field
-    }
-  });
 
-  return {
-    field,
-    before,
-    after
-  };
 }
 
 module.exports = {

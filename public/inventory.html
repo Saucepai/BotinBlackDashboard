@@ -87,13 +87,30 @@ button:hover {
 <h1>📦 Inventory & Transactions</h1>
 
 <div class="card">
-  <h3>View Inventory</h3>
+  <h2>View Inventory</h2>
   <input id="inventoryUserId" placeholder="User ID">
   <button onclick="loadInventory()">View Inventory</button>
 </div>
 
 <div class="card">
-  <h3>Adjust Balance</h3>
+  <h3>Modify Inventory</h3>
+  <input id="invUserId" placeholder="User ID">
+  <input id="invItem" placeholder="Item name">
+  <select id="invColumn">
+    <option value="Horses">Horses</option>
+    <option value="Treasure">Treasure</option>
+    <option value="Food">Food</option>
+    <option value="Potion">Potion</option>
+    <option value="Other">Other</option>
+  </select>
+  <input id="invQty" type="number" value="1">
+  <button onclick="modifyInventory('add')">Add Item</button>
+  <button onclick="modifyInventory('remove')">Remove Item</button>
+</div>
+
+
+<div class="card">
+  <h4>Adjust Balance</h4>
   <input id="balanceUserId" placeholder="User ID">
   <input id="balanceAmount" type="number" placeholder="Amount">
   <select id="balanceField">
@@ -142,6 +159,25 @@ async function loadInventory() {
 
   show(text);
 }
+
+async function modifyInventory(action) {
+  const payload = {
+    userId: invUserId.value.trim(),
+    column: invColumn.value,
+    item: invItem.value.trim(),
+    quantity: Number(invQty.value) || 1,
+    action
+  };
+
+  const data = await callApi('/api/inventory/update', payload);
+
+  if (!data.success) {
+    return show(data.message, false);
+  }
+
+  show(`✅ Inventory updated`);
+}
+
 
 // ======================
 // BALANCE
