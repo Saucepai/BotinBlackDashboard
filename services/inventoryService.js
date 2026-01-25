@@ -7,27 +7,31 @@ function capitalizeWords(str) {
 
 function countDuplicates(itemsRaw) {
   if (!itemsRaw) return {};
-  const list = itemsRaw.split(',').map(i => i.trim()).filter(Boolean);
-  const counts = {};
-  list.forEach(item => {
-    const key = item.toLowerCase();
-    counts[key] = (counts[key] || 0) + 1;
-  });
-  return counts;
+  return itemsRaw
+    .split(',')
+    .map(i => i.trim())
+    .filter(Boolean)
+    .reduce((acc, item) => {
+      const key = item.toLowerCase();
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
 }
 
-function formatCounts(countsObj, emptyMsg) {
+function formatCounts(countsObj, emptyMsg = 'None') {
   const entries = Object.entries(countsObj);
-  if (entries.length === 0) return emptyMsg;
-  return entries.map(([item, count]) => {
-    const formatted = item.charAt(0).toUpperCase() + item.slice(1);
-    return count > 1 ? `${formatted} (${count}x)` : formatted;
-  });
+  if (!entries.length) return emptyMsg;
+  return entries
+    .map(([item, count]) => {
+      const formatted = item.charAt(0).toUpperCase() + item.slice(1);
+      return count > 1 ? `${formatted} (${count}x)` : formatted;
+    })
+    .join(', ');
 }
 
 function buildInventoryView(userData) {
-  const horses = formatCounts(countDuplicates(userData.Horses), 'None');
-  const treasure = formatCounts(countDuplicates(userData.Treasure), 'None');
+  const horses = formatCounts(countDuplicates(userData.Horses));
+  const treasure = formatCounts(countDuplicates(userData.Treasure));
 
   const consumables = {
     ...countDuplicates(userData.Food),
@@ -46,21 +50,17 @@ function buildInventoryView(userData) {
     });
   });
 
-  const cash = Number(userData.Cash) || 0;
-  const bank = Number(userData.Bank) || 0;
-  const stash = Number(userData.Stash) || 0;
-
   return {
     balances: {
-      cash,
-      bank,
-      stash,
-      total: cash + bank + stash
+      cash: Number(userData.Cash) || 0,
+      bank: Number(userData.Bank) || 0,
+      stash: Number(userData.Stash) || 0,
+      total: (Number(userData.Cash) || 0) + (Number(userData.Bank) || 0) + (Number(userData.Stash) || 0)
     },
     horses,
     treasure,
-    guns: formatCounts(guns, 'None'),
-    consumables: formatCounts(consumables, 'None'),
+    guns: formatCounts(guns),
+    consumables: formatCounts(consumables),
     properties: userData.Properties ? capitalizeWords(userData.Properties) : 'None',
     licenses: userData.License ? capitalizeWords(userData.License) : 'None',
     other: userData.Other ? capitalizeWords(userData.Other) : 'None',

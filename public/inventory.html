@@ -94,18 +94,29 @@ button:hover {
 
 <div class="card">
   <h3>Modify Inventory</h3>
+
   <input id="invUserId" placeholder="User ID">
-  <input id="invItem" placeholder="Item name">
+
   <select id="invColumn">
-    <option value="Horses">Horses</option>
-    <option value="Treasure">Treasure</option>
     <option value="Food">Food</option>
     <option value="Potion">Potion</option>
-    <option value="Other">Other</option>
+    <option value="Hunting">Hunting</option>
+    <option value="Consumable">Consumable</option>
+    <option value="Bow">Bow</option>
+    <option value="Pistol">Pistol</option>
+    <option value="Revolver">Revolver</option>
+    <option value="Rifle">Rifle</option>
+    <option value="Repeater">Repeater</option>
+    <option value="Shotgun">Shotgun</option>
+    <option value="Horses">Horses</option>
+    <option value="Treasure">Treasure</option>
   </select>
-  <input id="invQty" type="number" value="1">
-  <button onclick="modifyInventory('add')">Add Item</button>
-  <button onclick="modifyInventory('remove')">Remove Item</button>
+
+  <input id="invItem" placeholder="Item name">
+  <input id="invQty" type="number" value="1" min="1">
+
+  <button onclick="updateInventory('add')">Add Item</button>
+  <button onclick="updateInventory('remove')">Remove Item</button>
 </div>
 
 
@@ -160,23 +171,45 @@ async function loadInventory() {
   show(text);
 }
 
-async function modifyInventory(action) {
+async function updateInventory(action) {
   const payload = {
     userId: invUserId.value.trim(),
     column: invColumn.value,
     item: invItem.value.trim(),
-    quantity: Number(invQty.value) || 1,
+    quantity: Number(invQty.value),
     action
   };
 
-  const data = await callApi('/api/inventory/update', payload);
+if (
+  !payload.userId ||
+  !payload.item ||
+  !Number.isInteger(payload.quantity) ||
+  payload.quantity < 1
+) {
+  return show('Quantity must be a positive number', false);
+}
 
+
+  const res = await fetch('/api/inventory/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
   if (!data.success) {
     return show(data.message, false);
   }
 
-  show(`✅ Inventory updated`);
+  const verb = action === 'add' ? 'added' : 'removed';
+  show(`✅ ${payload.item} ${verb} in ${payload.column}`);
+
+  await loadInventory();
+
+  invItem.value = '';
+  invQty.value = 1;
 }
+
 
 
 // ======================

@@ -1,6 +1,6 @@
 // services/balanceService.js
 const { supabase } = require('../lib/supabaseClient');
-const { logTransaction } = require('../functions/transactionLogger');
+// const { logTransaction } = require('../functions/transactionLogger'); // Placeholder
 
 const VALID_FIELDS = ['Cash', 'Bank', 'Stash'];
 
@@ -8,14 +8,14 @@ async function updateBalance({
   userId,
   field,
   amount,
-  adminId = 'dashboard',  // Placeholder for when admin user accounts are added
-  adminUsername = 'Dashboard Admin'  // Placeholder for when admin user accounts are added
+  adminId = 'dashboard',
+  adminUsername = 'Dashboard Admin'
 }) {
   if (!VALID_FIELDS.includes(field)) {
     throw new Error(`Invalid balance field: ${field}`);
   }
 
-  // 1. Fetch user
+  // 1️⃣ Fetch user
   const { data: user, error: fetchError } = await supabase
     .from('users')
     .select('*')
@@ -33,19 +33,29 @@ async function updateBalance({
     throw new Error(`${field} balance cannot go below zero`);
   }
 
-  // 2. Update balance
+  // 2️⃣ Update balance
   const { error: updateError } = await supabase
     .from('users')
     .update({ [field]: after })
     .eq('UserID', userId);
 
   if (updateError) {
-    throw updateError;
+    throw new Error(updateError.message);
   }
 
+  // 3️⃣ Optional: log transaction
+  // logTransaction({
+  //   command: 'update-balance',
+  //   userId,
+  //   username: user.Username,
+  //   amount,
+  //   balanceBefore: before,
+  //   balanceAfter: after,
+  //   source: 'Dashboard',
+  //   metadata: { adminId, adminUsername }
+  // });
 
+  return { before, after };
 }
 
-module.exports = {
-  updateBalance
-};
+module.exports = { updateBalance };
