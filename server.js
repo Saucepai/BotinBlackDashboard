@@ -15,11 +15,7 @@ const balanceRoutes = require('./routes/balance');
 // ============================
 
 const { getInventoryByUserId } = require('./services/inventoryService');
-const {
-  giveProperty,
-  removeProperty,
-  deleteProperty
-} = require('./services/propertyService');
+const inventoryRoutes = require('./routes/inventory');
 
 // ============================
 // AUTH CONFIG
@@ -108,6 +104,7 @@ function startDashboard() {
 
   app.use(express.static(path.join(__dirname, 'public')));
   app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+  app.use('/api', requireAuth, inventoryRoutes);
 
   // ============================
   // UI ROUTES
