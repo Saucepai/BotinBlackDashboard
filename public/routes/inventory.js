@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { updateInventoryItem } = require('../services/inventoryMutationService');
+const { updateInventoryItem } = require('../../services/inventoryMutationService');
 
 router.post('/inventory/update', async (req, res) => {
   try {

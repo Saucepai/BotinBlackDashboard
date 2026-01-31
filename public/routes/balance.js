@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { updateBalance } = require('../services/balanceService');
+const { updateBalance } = require('../../services/balanceService');
+
 
 router.post('/users/balance', async (req, res) => {
   try {

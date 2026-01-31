@@ -1,5 +1,5 @@
 // services/balanceService.js
-const { supabase } = require('../lib/supabaseClient');
+const { supabase } = require('../lib/supabaseclient');
 // const { logTransaction } = require('../functions/transactionLogger'); // Placeholder
 
 const VALID_FIELDS = ['Cash', 'Bank', 'Stash'];

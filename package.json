@@ -11,13 +11,12 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.19.2",
-    "express-session": "^1.17.3"
+    "express-session": "^1.17.3",
+    "supabase": "^2.74.4"
   },
-  
   "engines": {
-  "node": "18.x"
+    "node": "18.x"
   },
-  
   "keywords": [],
   "author": "",
   "license": "ISC",
