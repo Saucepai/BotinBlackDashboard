@@ -8,14 +8,14 @@ const bcrypt = require('bcrypt');
 // ROUTES
 // ============================
 
-const balanceRoutes = require('./routes/balance');
+const balanceRoutes = require('./public/routes/balance');
 
 // ============================
 // SERVICES
 // ============================
 
 const { getInventoryByUserId } = require('./services/inventoryService');
-const inventoryRoutes = require('./routes/inventory');
+const inventoryRoutes = require('./public/routes/inventory');
 
 // ============================
 // AUTH CONFIG
