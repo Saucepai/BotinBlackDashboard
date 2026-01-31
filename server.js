@@ -195,7 +195,6 @@ app.post('/api/properties/delete', requireAuth, async (req, res) => {
   });
 }
 
-//startDashboard();
-//console.log ('Dashboard is connected');
+startDashboard();
 
 module.exports = { startDashboard };
