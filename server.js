@@ -119,7 +119,7 @@ function startDashboard() {
   );
 
   app.get('/transactions', requireAuth, (_, res) =>
-    res.sendFile(path.join(__dirname, 'public/transactions.html'))
+    res.sendFile(path.join(__dirname, 'public/transactionlog.html'))
   );
 
   app.get('/properties', requireAuth, (_, res) =>
