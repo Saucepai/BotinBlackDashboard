@@ -121,7 +121,7 @@ document.getElementById('nazarBtn').onclick = async () => {
 
     try {
         // ✅ Call the new service endpoint
-        const res = await fetch('/api/misc/nazar', {
+        const res = await fetch('/api/services/nazarService', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
